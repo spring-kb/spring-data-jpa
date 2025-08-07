@@ -4,13 +4,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -27,10 +28,10 @@ public class SpringDataConfiguration {
         dataSource.setUrl("jdbc:tc:postgresql:14.12:///test-hibernate");
         dataSource.setUsername("user");
         dataSource.setPassword("password");
-
-         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
-    return builder.setType(EmbeddedDatabaseType.HSQL).build();
-       // return dataSource;
+        // return dataSource;
+        EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
+        return builder.setType(EmbeddedDatabaseType.HSQL).build();
+        
     }
 
     @Bean
@@ -41,7 +42,8 @@ public class SpringDataConfiguration {
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        jpaVendorAdapter.setDatabase(Database.POSTGRESQL);
+        //jpaVendorAdapter.setDatabase(Database.POSTGRESQL);
+        jpaVendorAdapter.setDatabase(Database.HSQL);
         jpaVendorAdapter.setShowSql(true);
         jpaVendorAdapter.setGenerateDdl(true);
         return jpaVendorAdapter;
@@ -53,7 +55,8 @@ public class SpringDataConfiguration {
         localContainerEntityManagerFactoryBean.setDataSource(dataSource());
         Properties jpaProperties = new Properties();
         jpaProperties.put("hibernate.hbm2ddl.auto", "create"); // Or "create", "create-drop", "validate"
-        //jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect"); // Or your specific dialect
+        // jpaProperties.put("hibernate.dialect",
+        // "org.hibernate.dialect.PostgreSQLDialect"); // Or your specific dialect
         localContainerEntityManagerFactoryBean.setJpaProperties(jpaProperties);
         localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter());
         localContainerEntityManagerFactoryBean.setPackagesToScan("org.mine.kb.spring.data.jpa");
